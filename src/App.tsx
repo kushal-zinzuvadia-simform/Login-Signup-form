@@ -1,9 +1,24 @@
-function App() {
+import { Box, CssBaseline, Container } from "@mui/material";
+import { Register } from "./components/Register";
+
+export function App() {
   return (
-    <div>
-      
-    </div>
+    <>
+      <CssBaseline />
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "grey.100",
+          py: 4,
+        }}
+      >
+        <Container maxWidth="sm">
+          <Register />
+        </Container>
+      </Box>
+    </>
   );
 }
-
-export default App;
