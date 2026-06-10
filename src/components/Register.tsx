@@ -7,6 +7,12 @@ import {
   Typography,
   Button,
   MenuItem,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormHelperText,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { INDIAN_STATES } from "../data/stateData";
@@ -55,6 +61,44 @@ export const Register = () => {
           helperText={errors.lastName?.message}
         />
 
+        <Controller
+          name="gender"
+          control={control}
+          render={({ field }) => (
+            <FormControl error={!!errors.gender}>
+              <FormLabel>Gender</FormLabel>
+              <RadioGroup {...field} value={field.value ?? ""} row>
+                <FormControlLabel
+                  value="Male"
+                  control={<Radio />}
+                  label="Male"
+                />
+                <FormControlLabel
+                  value="Female"
+                  control={<Radio />}
+                  label="Female"
+                />
+              </RadioGroup>
+              {errors.gender && (
+                <FormHelperText>{errors.gender.message}</FormHelperText>
+              )}
+            </FormControl>
+          )}
+        />
+
+        <TextField
+          {...register("dob")}
+          label="Date of Birth"
+          type="date"
+          fullWidth
+          error={!!errors.dob}
+          helperText={errors.dob?.message}
+          slotProps={{
+            inputLabel: { shrink: true },
+            htmlInput: { max: new Date().toISOString().split("T")[0] },
+          }}
+        />
+
         <TextField
           {...register("phone")}
           label="Phone Number"
@@ -62,6 +106,11 @@ export const Register = () => {
           fullWidth
           error={!!errors.phone}
           helperText={errors.phone?.message}
+          slotProps={{
+            htmlInput: {
+              maxLength: 10,
+            },
+          }}
         />
 
         <TextField

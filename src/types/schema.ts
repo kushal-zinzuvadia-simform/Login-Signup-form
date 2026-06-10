@@ -10,7 +10,8 @@ export const schema = z.object({
     })
     .max(20, {
       message: "First name is too long. Max. 20 characters are allowed",
-    }),
+    })
+    .regex(/^[a-zA-Z]+$/, "Name must contain only alphabets"),
 
   lastName: z
     .string()
@@ -19,14 +20,39 @@ export const schema = z.object({
     })
     .max(20, {
       message: "Last name is too long. Max. 20 characters are allowed",
-    }),
+    })
+    .regex(/^[a-zA-Z]+$/, "Name must contain only alphabets"),
+
+  gender: z.enum(["Male", "Female"], {
+    message: "Please select a gender",
+  }),
+
+  dob: z
+    .string()
+    .min(1, { message: "Date of birth is required" })
+    .refine(
+      (val) => {
+        const date = new Date(val);
+        return !isNaN(date.getTime());
+      },
+      { message: "Enter a valid date of birth" },
+    )
+    .refine(
+      (val) => {
+        return new Date(val) < new Date();
+      },
+      { message: "Date of birth must be in the past" },
+    ),
 
   phone: z
     .string()
     .min(1, { message: "Phone number is required" })
-    .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+    .regex(/^\d{10}$/, "Phone number must contain only digits"),
 
-  email: z.string().min(1, { message: "Email is required" }).email(),
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .check(z.email({ message: "Enter a valid email address" })),
 
   address: z
     .string()
