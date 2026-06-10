@@ -1,16 +1,30 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { schema, type Schema } from "../types/schema";
-import { Stack, TextField, Paper, Typography, Button } from "@mui/material";
+import {
+  Stack,
+  TextField,
+  Paper,
+  Typography,
+  Button,
+  MenuItem,
+} from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { INDIAN_STATES } from "../data/stateData";
 
 export const Register = () => {
   const {
     register,
+    control,
+    handleSubmit,
     formState: { errors, isValid },
   } = useForm<Schema>({
     mode: "onChange",
     resolver: zodResolver(schema),
   });
+
+  const onSubmit = (data: Schema) => {
+    console.log("Form Submitted:", data);
+  };
 
   return (
     <Paper
@@ -20,7 +34,7 @@ export const Register = () => {
         borderRadius: 3,
       }}
     >
-      <Stack spacing={3}>
+      <Stack component="form" onSubmit={handleSubmit(onSubmit)} spacing={3}>
         <Typography variant="h4" align="center">
           Register
         </Typography>
@@ -39,6 +53,15 @@ export const Register = () => {
           fullWidth
           error={!!errors.lastName}
           helperText={errors.lastName?.message}
+        />
+
+        <TextField
+          {...register("phone")}
+          label="Phone Number"
+          type="tel"
+          fullWidth
+          error={!!errors.phone}
+          helperText={errors.phone?.message}
         />
 
         <TextField
@@ -65,8 +88,35 @@ export const Register = () => {
           helperText={errors.city?.message}
         />
 
-        <Button variant="contained" size="large" disabled={!isValid}>
-          Register
+        <Controller
+          name="stateCode"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              value={field.value ?? ""} // registers as controlled component
+              select
+              label="Select State"
+              fullWidth
+              error={!!errors.stateCode}
+              helperText={errors.stateCode?.message}
+            >
+              {INDIAN_STATES.map((state) => (
+                <MenuItem key={state.code} value={state.code}>
+                  {state.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={!isValid}
+        >
+          Sign Up
         </Button>
       </Stack>
     </Paper>

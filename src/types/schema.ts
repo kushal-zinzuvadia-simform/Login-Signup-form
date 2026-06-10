@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { patterns } from "../utils/Patterns";
+import { INDIAN_STATES } from "../data/stateData";
 
 export const schema = z.object({
   firstName: z
@@ -20,7 +21,12 @@ export const schema = z.object({
       message: "Last name is too long. Max. 20 characters are allowed",
     }),
 
-  email: z.email().min(1, { message: "Email is required" }),
+  phone: z
+    .string()
+    .min(1, { message: "Phone number is required" })
+    .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+
+  email: z.string().min(1, { message: "Email is required" }).email(),
 
   address: z
     .string()
@@ -32,10 +38,17 @@ export const schema = z.object({
 
   city: z
     .string()
-    .min(1, { message: "*Required" })
-    .max(50, { message: "Address should not be more than 50 characters long." })
-    .refine((address) => patterns.address.test(address), {
+    .min(1, { message: "City is required" })
+    .max(30, { message: "City should not be more than 30 characters long." })
+    .refine((city) => patterns.city.test(city), {
       message: "Enter a valid City.",
+    }),
+
+  stateCode: z
+    .string()
+    .min(1, { message: "Please select a state" })
+    .refine((val) => INDIAN_STATES.some((state) => state.code === val), {
+      message: "Invalid state selected",
     }),
 });
 
