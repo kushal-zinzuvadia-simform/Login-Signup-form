@@ -1,23 +1,32 @@
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { schema, type Schema } from "../types/schema";
+
 import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  FormLabel,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Paper,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
-  Paper,
   Typography,
-  Button,
-  MenuItem,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  FormHelperText,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { INDIAN_STATES } from "../data/stateData";
+import { schema, type Schema } from "../types/schema";
 
 export const Register = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const {
     register,
     control,
@@ -157,6 +166,52 @@ export const Register = () => {
               ))}
             </TextField>
           )}
+        />
+
+        <TextField
+          {...register("password")}
+          type={showPassword ? "text" : "password"}
+          label="Password"
+          fullWidth
+          error={!!errors.password}
+          helperText={errors.password?.message}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    edge="end"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+
+        <TextField
+          {...register("confirmPassword")}
+          type={showConfirmPassword ? "text" : "password"}
+          label="Confirm Password"
+          fullWidth
+          error={!!errors.confirmPassword}
+          helperText={errors.confirmPassword?.message}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    edge="end"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
 
         <Button

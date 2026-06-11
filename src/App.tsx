@@ -1,4 +1,5 @@
-import { Box, CssBaseline, Container } from "@mui/material";
+import { Box, Container, CssBaseline } from "@mui/material";
+
 import { Register } from "./components/Register";
 
 export function App() {
