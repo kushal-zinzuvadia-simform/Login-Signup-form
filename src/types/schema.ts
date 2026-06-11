@@ -68,7 +68,7 @@ export const schema = z
       .string()
       .min(5, { message: "Address should be at least 5 characters long." })
       .max(100, {
-        message: "Address should not be more than 50 characters long.",
+        message: "Address should not be more than 100 characters long.",
       })
       .refine((address) => patterns.address.test(address), {
         message: "Enter a valid Address.",
@@ -98,10 +98,19 @@ export const schema = z
       ),
 
     confirmPassword: z.string().min(1, "Please confirm your password"),
+
+    termsAccepted: z.literal(true, {
+      message: "You must accept the Privacy Policy and Terms & Conditions",
+    }),
   })
-  .refine((profile) => profile.password === profile.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+  .superRefine((data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["confirmPassword"],
+        message: "Passwords do not match",
+      });
+    }
   });
 
 export type Schema = z.infer<typeof schema>;

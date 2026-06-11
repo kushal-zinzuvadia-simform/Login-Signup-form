@@ -3,6 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 
 import {
   Button,
+  Checkbox,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -31,9 +32,10 @@ export const Register = () => {
     register,
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<Schema>({
-    mode: "onChange",
+    mode: "all",
+    reValidateMode: "onChange",
     resolver: zodResolver(schema),
   });
 
@@ -75,8 +77,13 @@ export const Register = () => {
           control={control}
           render={({ field }) => (
             <FormControl error={!!errors.gender}>
-              <FormLabel>Gender</FormLabel>
-              <RadioGroup {...field} value={field.value ?? ""} row>
+              <FormLabel id="gender-label">Gender</FormLabel>
+              <RadioGroup
+                {...field}
+                value={field.value ?? ""}
+                row
+                aria-labelledby="gender-label"
+              >
                 <FormControlLabel
                   value="Male"
                   control={<Radio />}
@@ -118,6 +125,7 @@ export const Register = () => {
           slotProps={{
             htmlInput: {
               maxLength: 10,
+              autoComplete: "tel",
             },
           }}
         />
@@ -128,6 +136,9 @@ export const Register = () => {
           fullWidth
           error={!!errors.email}
           helperText={errors.email?.message}
+          slotProps={{
+            htmlInput: { autoComplete: "email" },
+          }}
         />
 
         <TextField
@@ -136,6 +147,9 @@ export const Register = () => {
           fullWidth
           error={!!errors.address}
           helperText={errors.address?.message}
+          slotProps={{
+            htmlInput: { autoComplete: "street-address" },
+          }}
         />
 
         <TextField
@@ -214,12 +228,30 @@ export const Register = () => {
           }}
         />
 
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          disabled={!isValid}
-        >
+        <Controller
+          name="termsAccepted"
+          control={control}
+          render={({ field }) => (
+            <FormControl error={!!errors.termsAccepted}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={field.value}
+                    onChange={(event) => field.onChange(event.target.checked)}
+                  />
+                }
+                label={
+                  <>I agree to the Privacy Policy and Terms & Conditions</>
+                }
+              />
+              {errors.termsAccepted && (
+                <FormHelperText>{errors.termsAccepted.message}</FormHelperText>
+              )}
+            </FormControl>
+          )}
+        />
+
+        <Button type="submit" variant="contained" size="large">
           Sign Up
         </Button>
       </Stack>
