@@ -25,7 +25,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { INDIAN_STATES } from "../data/stateData";
-import { schema, type Schema } from "../types/schema";
+import { schema, type Schema, type User } from "../types/schema";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -44,9 +44,24 @@ export const Register = () => {
   });
 
   const onSubmit = (data: Schema) => {
-    console.log("Form Submitted:", data);
+    const storedUsers = localStorage.getItem("users");
+
+    const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
+
+    const userExists = users.some(
+      (user) => user.email.toLowerCase() === data.email.toLowerCase(),
+    );
+
+    if (userExists) {
+      console.log("User already exists!");
+      return;
+    }
+
     const { confirmPassword, ...user } = data;
-    localStorage.setItem("user", JSON.stringify(user));
+
+    users.push(user);
+
+    localStorage.setItem("users", JSON.stringify(users));
 
     navigate("/login");
   };

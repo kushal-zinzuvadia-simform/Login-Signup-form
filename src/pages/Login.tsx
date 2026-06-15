@@ -17,6 +17,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginSchema } from "../types/loginSchema";
+import type { User } from "../types/schema";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -36,24 +37,26 @@ export const Login = () => {
   const onSubmit = (data: LoginSchema) => {
     setLoginError("");
 
-    const storedUser = localStorage.getItem("user");
+    const storedUsers = localStorage.getItem("users");
 
-    if (!storedUser) {
-      setLoginError("No account found. Please sign up first.");
+    if (!storedUsers) {
+      setLoginError("No Users found. Please sign up first.");
       return;
     }
 
-    const user = JSON.parse(storedUser);
+    const users: User[] = JSON.parse(storedUsers);
+    const validUser = users.find(
+      (user) =>
+        user.email.toLowerCase() === data.email.toLowerCase() &&
+        user.password === data.password,
+    );
 
-    const isValidUser =
-      user.email === data.email && user.password === data.password;
-
-    if (!isValidUser) {
+    if (!validUser) {
       setLoginError("Invalid email or password.");
       return;
     }
 
-    localStorage.setItem("isAuthenticated", "true");
+    localStorage.setItem("currentUser", JSON.stringify(validUser));
 
     navigate("/profile", { replace: true });
   };
