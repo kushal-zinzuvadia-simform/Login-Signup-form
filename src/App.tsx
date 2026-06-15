@@ -1,6 +1,11 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import { Box, Container, CssBaseline } from "@mui/material";
 
-import { Register } from "./components/Register";
+import { Login } from "./pages/Login";
+import { Profile } from "./pages/Profile";
+import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { Register } from "./pages/Register";
 
 export function App() {
   return (
@@ -17,7 +22,21 @@ export function App() {
         }}
       >
         <Container maxWidth="sm">
-          <Register />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/signup" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+
+              <Route
+                index
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </BrowserRouter>
         </Container>
       </Box>
     </>

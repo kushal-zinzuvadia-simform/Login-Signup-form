@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import {
   Button,
@@ -27,6 +29,7 @@ import { schema, type Schema } from "../types/schema";
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -41,6 +44,10 @@ export const Register = () => {
 
   const onSubmit = (data: Schema) => {
     console.log("Form Submitted:", data);
+    const { confirmPassword, ...user } = data;
+    localStorage.setItem("user", JSON.stringify(user));
+
+    navigate("/login");
   };
 
   return (
