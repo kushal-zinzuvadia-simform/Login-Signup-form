@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 
 import {
   Button,
@@ -10,8 +9,10 @@ import {
   FormControlLabel,
   FormHelperText,
   FormLabel,
+  Grid,
   IconButton,
   InputAdornment,
+  Link,
   MenuItem,
   Paper,
   Radio,
@@ -52,188 +53,213 @@ export const Register = () => {
 
   return (
     <Paper
-      elevation={3}
+      elevation={4}
       sx={{
-        p: 4,
-        borderRadius: 3,
+        maxWidth: 900,
+        mx: "auto",
+        my: 4,
+        p: { xs: 3, md: 4 },
+        borderRadius: 4,
       }}
     >
-      <Stack component="form" onSubmit={handleSubmit(onSubmit)} spacing={3}>
-        <Typography variant="h4" align="center">
-          Register
-        </Typography>
+      <Stack component="form" spacing={3} onSubmit={handleSubmit(onSubmit)}>
+        <Stack>
+          <Typography variant="h4" align="center">
+            Create Account
+          </Typography>
+        </Stack>
 
-        <TextField
-          {...register("firstName")}
-          label="First Name"
-          fullWidth
-          error={!!errors.firstName}
-          helperText={errors.firstName?.message}
-        />
-
-        <TextField
-          {...register("lastName")}
-          label="Last Name"
-          fullWidth
-          error={!!errors.lastName}
-          helperText={errors.lastName?.message}
-        />
-
-        <Controller
-          name="gender"
-          control={control}
-          render={({ field }) => (
-            <FormControl error={!!errors.gender}>
-              <FormLabel id="gender-label">Gender</FormLabel>
-              <RadioGroup
-                {...field}
-                value={field.value ?? ""}
-                row
-                aria-labelledby="gender-label"
-              >
-                <FormControlLabel
-                  value="Male"
-                  control={<Radio />}
-                  label="Male"
-                />
-                <FormControlLabel
-                  value="Female"
-                  control={<Radio />}
-                  label="Female"
-                />
-              </RadioGroup>
-              {errors.gender && (
-                <FormHelperText>{errors.gender.message}</FormHelperText>
-              )}
-            </FormControl>
-          )}
-        />
-
-        <TextField
-          {...register("dob")}
-          label="Date of Birth"
-          type="date"
-          fullWidth
-          error={!!errors.dob}
-          helperText={errors.dob?.message}
-          slotProps={{
-            inputLabel: { shrink: true },
-            htmlInput: { max: new Date().toISOString().split("T")[0] },
-          }}
-        />
-
-        <TextField
-          {...register("phone")}
-          label="Phone Number"
-          type="tel"
-          fullWidth
-          error={!!errors.phone}
-          helperText={errors.phone?.message}
-          slotProps={{
-            htmlInput: {
-              maxLength: 10,
-              autoComplete: "tel",
-            },
-          }}
-        />
-
-        <TextField
-          {...register("email")}
-          label="Email"
-          fullWidth
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          slotProps={{
-            htmlInput: { autoComplete: "email" },
-          }}
-        />
-
-        <TextField
-          {...register("address")}
-          label="Address"
-          fullWidth
-          error={!!errors.address}
-          helperText={errors.address?.message}
-          slotProps={{
-            htmlInput: { autoComplete: "street-address" },
-          }}
-        />
-
-        <TextField
-          {...register("city")}
-          label="City"
-          fullWidth
-          error={!!errors.city}
-          helperText={errors.city?.message}
-        />
-
-        <Controller
-          name="stateCode"
-          control={control}
-          render={({ field }) => (
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
-              {...field}
-              value={field.value ?? ""} // registers as controlled component
-              select
-              label="Select State"
+              {...register("firstName")}
+              label="First Name"
               fullWidth
-              error={!!errors.stateCode}
-              helperText={errors.stateCode?.message}
-            >
-              {INDIAN_STATES.map((state) => (
-                <MenuItem key={state.code} value={state.code}>
-                  {state.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
-        />
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
+            />
+          </Grid>
 
-        <TextField
-          {...register("password")}
-          type={showPassword ? "text" : "password"}
-          label="Password"
-          fullWidth
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    edge="end"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              {...register("lastName")}
+              label="Last Name"
+              fullWidth
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
+            />
+          </Grid>
 
-        <TextField
-          {...register("confirmPassword")}
-          type={showConfirmPassword ? "text" : "password"}
-          label="Confirm Password"
-          fullWidth
-          error={!!errors.confirmPassword}
-          helperText={errors.confirmPassword?.message}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    edge="end"
-                    onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  >
-                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
+              name="gender"
+              control={control}
+              render={({ field }) => (
+                <FormControl error={!!errors.gender}>
+                  <FormLabel>Gender</FormLabel>
+
+                  <RadioGroup {...field} value={field.value ?? ""} row>
+                    <FormControlLabel
+                      value="Male"
+                      control={<Radio />}
+                      label="Male"
+                    />
+
+                    <FormControlLabel
+                      value="Female"
+                      control={<Radio />}
+                      label="Female"
+                    />
+                  </RadioGroup>
+
+                  <FormHelperText>{errors.gender?.message}</FormHelperText>
+                </FormControl>
+              )}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              {...register("dob")}
+              label="Birth Date"
+              type="date"
+              fullWidth
+              error={!!errors.dob}
+              helperText={errors.dob?.message}
+              slotProps={{
+                inputLabel: { shrink: true },
+                htmlInput: {
+                  max: new Date().toISOString().split("T")[0],
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              {...register("phone")}
+              label="Contact Number"
+              fullWidth
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              {...register("email")}
+              label="Email"
+              fullWidth
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              {...register("city")}
+              label="City"
+              fullWidth
+              error={!!errors.city}
+              helperText={errors.city?.message}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
+              name="stateCode"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ""}
+                  select
+                  label="State"
+                  fullWidth
+                  error={!!errors.stateCode}
+                  helperText={errors.stateCode?.message}
+                >
+                  {INDIAN_STATES.map((state) => (
+                    <MenuItem key={state.code} value={state.code}>
+                      {state.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <TextField
+              {...register("address")}
+              label="Address"
+              multiline
+              rows={2}
+              fullWidth
+              error={!!errors.address}
+              helperText={errors.address?.message}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              {...register("password")}
+              type={showPassword ? "text" : "password"}
+              label="Password"
+              fullWidth
+              error={!!errors.password}
+              helperText={
+                errors.password?.message ??
+                "Must contain letters, numbers and a special character"
+              }
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              {...register("confirmPassword")}
+              type={showConfirmPassword ? "text" : "password"}
+              label="Confirm Password"
+              fullWidth
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword?.message}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      >
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
 
         <Controller
           name="termsAccepted"
@@ -247,20 +273,34 @@ export const Register = () => {
                     onChange={(event) => field.onChange(event.target.checked)}
                   />
                 }
-                label={
-                  <>I agree to the Privacy Policy and Terms & Conditions</>
-                }
+                label="I agree to the Privacy Policy and Terms & Conditions"
               />
-              {errors.termsAccepted && (
-                <FormHelperText>{errors.termsAccepted.message}</FormHelperText>
-              )}
+
+              <FormHelperText>{errors.termsAccepted?.message}</FormHelperText>
             </FormControl>
           )}
         />
 
-        <Button type="submit" variant="contained" size="large">
-          Sign Up
+        <Button
+          type="submit"
+          variant="contained"
+          size="large"
+          fullWidth
+          sx={{
+            py: 1.5,
+            borderRadius: 2,
+            fontWeight: 600,
+          }}
+        >
+          Create Account
         </Button>
+
+        <Typography variant="body2" align="center" color="text.secondary">
+          Already a member?{" "}
+          <Link component={RouterLink} to="/login" underline="hover">
+            Login here
+          </Link>
+        </Typography>
       </Stack>
     </Paper>
   );
