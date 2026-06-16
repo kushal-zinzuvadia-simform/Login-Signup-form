@@ -17,7 +17,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginSchema } from "../types/loginSchema";
-import type { User } from "../types/schema";
+import type { User } from "../types/userSchema";
 
 export const Login = () => {
   const navigate = useNavigate();

@@ -62,7 +62,8 @@ export const schema = z
     email: z
       .string()
       .min(1, { message: "Email is required" })
-      .check(z.email({ message: "Enter a valid email address" })),
+      .check(z.email({ message: "Enter a valid email address" }))
+      .max(254, { message: "Email must not exceed 254 characters" }),
 
     address: z
       .string()

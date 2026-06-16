@@ -1,8 +1,9 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { Box, Container, CssBaseline } from "@mui/material";
 
 import { Login } from "./pages/Login";
+import { PublicRoute } from "./routes/PublicRoute";
 import { Profile } from "./pages/Profile";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { Register } from "./pages/Register";
@@ -24,17 +25,36 @@ export function App() {
         <Container maxWidth="sm">
           <BrowserRouter>
             <Routes>
-              <Route path="/signup" element={<Register />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
 
               <Route
-                index
+                path="/signup"
+                element={
+                  <PublicRoute>
+                    <Register />
+                  </PublicRoute>
+                }
+              />
+
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                }
+              />
+
+              <Route
+                path="/profile"
                 element={
                   <ProtectedRoute>
                     <Profile />
                   </ProtectedRoute>
                 }
               />
+
+              <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </BrowserRouter>
         </Container>

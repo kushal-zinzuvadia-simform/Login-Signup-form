@@ -25,7 +25,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { INDIAN_STATES } from "../data/stateData";
-import { schema, type Schema, type User } from "../types/schema";
+import { schema, type Schema, type User } from "../types/userSchema";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -284,7 +284,7 @@ export const Register = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={field.value}
+                    checked={field.value ?? false}
                     onChange={(event) => field.onChange(event.target.checked)}
                   />
                 }
