@@ -142,5 +142,3 @@ export type User = Omit<
 > & {
   profileImage?: string;
 };
-
-export type Gender = (typeof GENDERS)[number];
