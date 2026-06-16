@@ -3,45 +3,65 @@ import { z } from "zod";
 import { INDIAN_STATES } from "../data/stateData";
 import { patterns } from "../utils/Patterns";
 
-export const schema = z
+export const GENDERS = ["Male", "Female"] as const;
+
+export const STATE_CODES = INDIAN_STATES.map((state) => state.code) as [
+  string,
+  ...string[],
+];
+
+const nameSchema = z
+  .string()
+  .min(2, {
+    message: "Name must contain at least 2 characters",
+  })
+  .max(20, {
+    message: "Name cannot exceed 20 characters",
+  })
+  .regex(patterns.name, {
+    message: "Name must contain only alphabets",
+  });
+
+const citySchema = z
+  .string()
+  .min(1, {
+    message: "City is required",
+  })
+  .max(30, {
+    message: "City cannot exceed 30 characters",
+  })
+  .regex(patterns.city, {
+    message: "Enter a valid city",
+  });
+
+export const registerSchema = z
   .object({
-    firstName: z
-      .string()
-      .min(2, {
-        message: "First name is too short. At least 2 characters are expected",
-      })
-      .max(20, {
-        message: "First name is too long. Max. 20 characters are allowed",
-      })
-      .regex(patterns.name, "Name must contain only alphabets"),
+    firstName: nameSchema,
 
-    lastName: z
-      .string()
-      .min(2, {
-        message: "Last name is too short. At least 2 characters are expected",
-      })
-      .max(20, {
-        message: "Last name is too long. Max. 20 characters are allowed",
-      })
-      .regex(patterns.name, "Name must contain only alphabets"),
+    lastName: nameSchema,
 
-    gender: z.enum(["Male", "Female"], {
+    gender: z.enum(GENDERS, {
       message: "Please select a gender",
     }),
 
     dob: z
       .string()
-      .min(1, { message: "Date of birth is required" })
+      .min(1, {
+        message: "Date of birth is required",
+      })
       .refine(
-        (val) => {
-          const date = new Date(val);
+        (value) => {
+          const date = new Date(value);
+
           return !isNaN(date.getTime());
         },
-        { message: "Enter a valid date of birth" },
+        {
+          message: "Enter a valid date of birth",
+        },
       )
       .refine(
-        (val) => {
-          const dob = new Date(val);
+        (value) => {
+          const dob = new Date(value);
           const today = new Date();
 
           dob.setHours(0, 0, 0, 0);
@@ -56,49 +76,49 @@ export const schema = z
 
     phone: z
       .string()
-      .min(1, { message: "Phone number is required" })
-      .regex(patterns.phone, "Phone number must contain exactly 10 digits"),
+      .min(1, {
+        message: "Phone number is required",
+      })
+      .regex(patterns.phone, {
+        message: "Phone number must contain exactly 10 digits",
+      }),
 
     email: z
       .string()
-      .min(1, { message: "Email is required" })
       .check(z.email({ message: "Enter a valid email address" }))
-      .max(254, { message: "Email must not exceed 254 characters" }),
+      .max(254, { message: "Email cannot exceed 254 characters" }),
 
     address: z
       .string()
-      .min(5, { message: "Address should be at least 5 characters long." })
-      .max(100, {
-        message: "Address should not be more than 100 characters long.",
+      .min(5, {
+        message: "Address should be at least 5 characters long",
       })
-      .refine((address) => patterns.address.test(address), {
-        message: "Enter a valid Address.",
+      .max(100, {
+        message: "Address cannot exceed 100 characters",
+      })
+      .regex(patterns.address, {
+        message: "Enter a valid address",
       }),
 
-    city: z
-      .string()
-      .min(1, { message: "City is required" })
-      .max(30, { message: "City should not be more than 30 characters long." })
-      .refine((city) => patterns.city.test(city), {
-        message: "Enter a valid City.",
-      }),
+    city: citySchema,
 
-    stateCode: z
-      .string()
-      .min(1, { message: "Please select a state" })
-      .refine((val) => INDIAN_STATES.some((state) => state.code === val), {
-        message: "Invalid state selected",
-      }),
+    stateCode: z.enum(STATE_CODES, {
+      message: "Please select a state",
+    }),
 
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters long")
-      .regex(
-        patterns.password,
-        "Password must contain letters, numbers and at least one special character",
-      ),
+      .min(8, {
+        message: "Password must be at least 8 characters long",
+      })
+      .regex(patterns.password, {
+        message:
+          "Password must contain letters, numbers and a special character",
+      }),
 
-    confirmPassword: z.string().min(1, "Please confirm your password"),
+    confirmPassword: z.string().min(1, {
+      message: "Please confirm your password",
+    }),
 
     termsAccepted: z.literal(true, {
       message: "You must accept the Privacy Policy and Terms & Conditions",
@@ -114,8 +134,13 @@ export const schema = z
     }
   });
 
-export type Schema = z.infer<typeof schema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;
 
-export type User = Omit<Schema, "confirmPassword"> & {
-  profileImage: string;
+export type User = Omit<
+  RegisterFormData,
+  "confirmPassword" | "termsAccepted"
+> & {
+  profileImage?: string;
 };
+
+export type Gender = (typeof GENDERS)[number];

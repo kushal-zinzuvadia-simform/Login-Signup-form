@@ -1,4 +1,4 @@
-import type { User } from "../types/userSchema";
+import { type User } from "../types/userSchema";
 
 export const getUsers = (): User[] => {
   const users = localStorage.getItem("users");

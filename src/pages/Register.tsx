@@ -21,7 +21,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { INDIAN_STATES } from "../data/stateData";
-import { schema, type Schema } from "../types/userSchema";
+import {
+  GENDERS,
+  registerSchema,
+  type RegisterFormData,
+} from "../types/userSchema";
 import { useProfileImage } from "../hooks/useProfileImage";
 import { getUsers, saveUsers, userExists } from "../utils/userStorage";
 import { ProfileImageUpload } from "../components/ProfileImageUpload";
@@ -36,24 +40,24 @@ export const Register = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<Schema>({
+  } = useForm<RegisterFormData>({
     mode: "all",
     reValidateMode: "onChange",
-    resolver: zodResolver(schema),
+    resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: Schema) => {
+  const onSubmit = (data: RegisterFormData) => {
     const users = getUsers();
 
     if (userExists(users, data.email)) {
       return;
     }
 
-    const { confirmPassword, ...user } = data;
+    const { confirmPassword, termsAccepted, ...user } = data;
 
     users.push({
       ...user,
-      profileImage,
+      profileImage: profileImage || undefined,
     });
 
     saveUsers(users);
@@ -109,17 +113,14 @@ export const Register = () => {
                   <FormLabel>Gender</FormLabel>
 
                   <RadioGroup {...field} value={field.value ?? ""} row>
-                    <FormControlLabel
-                      value="Male"
-                      control={<Radio />}
-                      label="Male"
-                    />
-
-                    <FormControlLabel
-                      value="Female"
-                      control={<Radio />}
-                      label="Female"
-                    />
+                    {GENDERS.map((gender) => (
+                      <FormControlLabel
+                        key={gender}
+                        value={gender}
+                        control={<Radio />}
+                        label={gender}
+                      />
+                    ))}
                   </RadioGroup>
 
                   <FormHelperText>{errors.gender?.message}</FormHelperText>
@@ -164,14 +165,6 @@ export const Register = () => {
               helperText={errors.email?.message}
             />
           </Grid>
-        </Grid>
-
-        <Grid size={{ xs: 12 }}>
-          <ProfileImageUpload
-            profileImage={profileImage}
-            imageError={imageError}
-            onUpload={handleImageUpload}
-          />
         </Grid>
 
         <Grid container spacing={2}>
@@ -222,21 +215,31 @@ export const Register = () => {
           </Grid>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <PasswordField
-            label="Password"
-            registration={register("password")}
-            error={errors.password}
-            helperText="Must contain letters, numbers and a special character"
+        <Grid size={{ xs: 12 }}>
+          <ProfileImageUpload
+            profileImage={profileImage}
+            imageError={imageError}
+            onUpload={handleImageUpload}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <PasswordField
-            label="Confirm Password"
-            registration={register("confirmPassword")}
-            error={errors.confirmPassword}
-          />
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <PasswordField
+              label="Password"
+              registration={register("password")}
+              error={errors.password}
+              helperText="Must contain letters, numbers and a special character"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <PasswordField
+              label="Confirm Password"
+              registration={register("confirmPassword")}
+              error={errors.confirmPassword}
+            />
+          </Grid>
         </Grid>
 
         <Controller
