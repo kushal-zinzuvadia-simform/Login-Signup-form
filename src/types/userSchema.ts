@@ -116,4 +116,6 @@ export const schema = z
 
 export type Schema = z.infer<typeof schema>;
 
-export type User = Omit<Schema, "confirmPassword">;
+export type User = Omit<Schema, "confirmPassword"> & {
+  profileImage: string;
+};

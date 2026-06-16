@@ -60,13 +60,14 @@ export const Profile = () => {
           }}
         >
           <Avatar
+            src={currentUser.profileImage}
             sx={{
               width: 80,
               height: 80,
               fontSize: 32,
             }}
           >
-            {currentUser.firstName[0]}
+            {!currentUser.profileImage && currentUser.firstName?.[0]}
           </Avatar>
 
           <Stack spacing={0.5}>

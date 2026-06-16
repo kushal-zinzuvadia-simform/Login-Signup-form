@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
@@ -10,8 +9,6 @@ import {
   FormHelperText,
   FormLabel,
   Grid,
-  IconButton,
-  InputAdornment,
   Link,
   MenuItem,
   Paper,
@@ -21,15 +18,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { INDIAN_STATES } from "../data/stateData";
-import { schema, type Schema, type User } from "../types/userSchema";
+import { schema, type Schema } from "../types/userSchema";
+import { useProfileImage } from "../hooks/useProfileImage";
+import { getUsers, saveUsers, userExists } from "../utils/userStorage";
+import { ProfileImageUpload } from "../components/ProfileImageUpload";
+import { PasswordField } from "../components/PasswordField";
 
 export const Register = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { profileImage, imageError, handleImageUpload } = useProfileImage();
   const navigate = useNavigate();
 
   const {
@@ -44,24 +43,20 @@ export const Register = () => {
   });
 
   const onSubmit = (data: Schema) => {
-    const storedUsers = localStorage.getItem("users");
+    const users = getUsers();
 
-    const users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
-
-    const userExists = users.some(
-      (user) => user.email.toLowerCase() === data.email.toLowerCase(),
-    );
-
-    if (userExists) {
-      console.log("User already exists!");
+    if (userExists(users, data.email)) {
       return;
     }
 
     const { confirmPassword, ...user } = data;
 
-    users.push(user);
+    users.push({
+      ...user,
+      profileImage,
+    });
 
-    localStorage.setItem("users", JSON.stringify(users));
+    saveUsers(users);
 
     navigate("/login");
   };
@@ -171,6 +166,14 @@ export const Register = () => {
           </Grid>
         </Grid>
 
+        <Grid size={{ xs: 12 }}>
+          <ProfileImageUpload
+            profileImage={profileImage}
+            imageError={imageError}
+            onUpload={handleImageUpload}
+          />
+        </Grid>
+
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
@@ -219,61 +222,21 @@ export const Register = () => {
           </Grid>
         </Grid>
 
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              {...register("password")}
-              type={showPassword ? "text" : "password"}
-              label="Password"
-              fullWidth
-              error={!!errors.password}
-              helperText={
-                errors.password?.message ??
-                "Must contain letters, numbers and a special character"
-              }
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword((prev) => !prev)}
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <PasswordField
+            label="Password"
+            registration={register("password")}
+            error={errors.password}
+            helperText="Must contain letters, numbers and a special character"
+          />
+        </Grid>
 
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              {...register("confirmPassword")}
-              type={showConfirmPassword ? "text" : "password"}
-              label="Confirm Password"
-              fullWidth
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword?.message}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowConfirmPassword((prev) => !prev)}
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <PasswordField
+            label="Confirm Password"
+            registration={register("confirmPassword")}
+            error={errors.confirmPassword}
+          />
         </Grid>
 
         <Controller
