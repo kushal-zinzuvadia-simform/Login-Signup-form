@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -13,29 +12,24 @@ import {
 
 import { INDIAN_STATES } from "../data/stateData";
 import { ProfileField } from "../components/ProfileField";
-import type { User } from "../types/userSchema";
+import { getCurrentUser, logout } from "../utils/auth";
 
 export const Profile = () => {
   const navigate = useNavigate();
 
-  const currentUser: User | null = useMemo(() => {
-    const storedUser = localStorage.getItem("currentUser");
-
-    return storedUser ? JSON.parse(storedUser) : null;
-  }, []);
+  const currentUser = getCurrentUser();
 
   if (!currentUser) {
-    navigate("/login", { replace: true });
-
     return null;
   }
 
   const stateName =
-    INDIAN_STATES.find((state) => state.code === currentUser.stateCode)?.name ??
-    currentUser.stateCode;
+    INDIAN_STATES.find(
+      ({ code }) => code === currentUser.stateCode,
+    )?.name ?? currentUser.stateCode;
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser");
+    logout();
 
     navigate("/login", { replace: true });
   };

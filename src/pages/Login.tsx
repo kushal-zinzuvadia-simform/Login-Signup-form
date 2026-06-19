@@ -14,10 +14,10 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { loginSchema, type LoginSchema } from "../types/loginSchema";
-import type { User } from "../types/userSchema";
+import { getUsers } from "../utils/userStorage";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -37,14 +37,13 @@ export const Login = () => {
   const onSubmit = (data: LoginSchema) => {
     setLoginError("");
 
-    const storedUsers = localStorage.getItem("users");
+    const users = getUsers();
 
-    if (!storedUsers) {
-      setLoginError("No Users found. Please sign up first.");
+    if (users.length === 0) {
+      setLoginError("No users found. Please sign up first.");
       return;
     }
 
-    const users: User[] = JSON.parse(storedUsers);
     const validUser = users.find(
       (user) =>
         user.email.toLowerCase() === data.email.toLowerCase() &&
