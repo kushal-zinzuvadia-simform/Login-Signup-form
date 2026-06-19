@@ -1,15 +1,8 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { getCurrentUser } from "../utils/auth";
 
-type ProtectedRouteProps = {
-  children: React.ReactNode;
-};
+export const ProtectedRoute = () => {
+  const currentUser = getCurrentUser();
 
-export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const currentUser = localStorage.getItem("currentUser");
-
-  if (!currentUser) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
+  return currentUser ? <Outlet /> : <Navigate to="/login" replace />;
 };

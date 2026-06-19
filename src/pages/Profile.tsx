@@ -24,9 +24,8 @@ export const Profile = () => {
   }
 
   const stateName =
-    INDIAN_STATES.find(
-      ({ code }) => code === currentUser.stateCode,
-    )?.name ?? currentUser.stateCode;
+    INDIAN_STATES.find(({ code }) => code === currentUser.stateCode)?.name ??
+    currentUser.stateCode;
 
   const handleLogout = () => {
     logout();

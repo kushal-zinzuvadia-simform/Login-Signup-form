@@ -27,32 +27,14 @@ export function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/login" replace />} />
 
-              <Route
-                path="/signup"
-                element={
-                  <PublicRoute>
-                    <Register />
-                  </PublicRoute>
-                }
-              />
+              <Route element={<PublicRoute />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Register />} />
+              </Route>
 
-              <Route
-                path="/login"
-                element={
-                  <PublicRoute>
-                    <Login />
-                  </PublicRoute>
-                }
-              />
-
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/profile" element={<Profile />} />
+              </Route>
 
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>

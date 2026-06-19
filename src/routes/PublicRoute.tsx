@@ -1,15 +1,8 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { getCurrentUser } from "../utils/auth";
 
-type PublicRouteProps = {
-  children: React.ReactNode;
-};
+export const PublicRoute = () => {
+  const currentUser = getCurrentUser();
 
-export const PublicRoute = ({ children }: PublicRouteProps) => {
-  const currentUser = localStorage.getItem("currentUser");
-
-  if (currentUser) {
-    return <Navigate to="/profile" replace />;
-  }
-
-  return children;
+  return currentUser ? <Navigate to="/profile" replace /> : <Outlet />;
 };
