@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
+
 import { getCurrentUser } from "../utils/auth";
 
 export const PublicRoute = () => {
