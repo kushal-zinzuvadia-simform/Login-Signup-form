@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
@@ -46,12 +47,17 @@ export const Register = () => {
     resolver: zodResolver(registerSchema),
   });
 
+  const [emailError, setEmailError] = useState("");
+
   const onSubmit = (data: RegisterFormData) => {
     const users = getUsers();
 
     if (userExists(users, data.email)) {
+      setEmailError("An account with this email already exists. Please login.");
       return;
     }
+
+    setEmailError("");
 
     const { confirmPassword, termsAccepted, ...user } = data;
 
@@ -161,8 +167,22 @@ export const Register = () => {
               {...register("email")}
               label="Email"
               fullWidth
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              error={!!errors.email || !!emailError}
+              helperText={
+                errors.email?.message || emailError ? (
+                  <>
+                    {errors.email?.message ||
+                      (emailError && (
+                        <>
+                          An account with this email already exists.{" "}
+                          <Link component={RouterLink} to="/login">
+                            Please login.
+                          </Link>
+                        </>
+                      ))}
+                  </>
+                ) : undefined
+              }
             />
           </Grid>
         </Grid>

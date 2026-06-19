@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import { Login } from "@mui/icons-material";
+import { Login } from "../pages/Login";
 
 import { AuthLayout } from "../layouts/AuthLayout";
 import { Profile } from "../pages/Profile";
