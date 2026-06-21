@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 
@@ -40,6 +39,8 @@ export const Register = () => {
     register,
     control,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<RegisterFormData>({
     mode: "all",
@@ -47,17 +48,16 @@ export const Register = () => {
     resolver: zodResolver(registerSchema),
   });
 
-  const [emailError, setEmailError] = useState("");
-
   const onSubmit = (data: RegisterFormData) => {
     const users = getUsers();
 
     if (userExists(users, data.email)) {
-      setEmailError("An account with this email already exists. Please login.");
+      setError("email", {
+        type: "manual",
+        message: "duplicate",
+      });
       return;
     }
-
-    setEmailError("");
 
     const { confirmPassword, termsAccepted, ...user } = data;
 
@@ -164,24 +164,23 @@ export const Register = () => {
 
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
-              {...register("email")}
+              {...register("email", {
+                onChange: () => clearErrors("email"),
+              })}
               label="Email"
               fullWidth
-              error={!!errors.email || !!emailError}
+              error={!!errors.email}
               helperText={
-                errors.email?.message || emailError ? (
+                errors.email?.message === "duplicate" ? (
                   <>
-                    {errors.email?.message ||
-                      (emailError && (
-                        <>
-                          An account with this email already exists.{" "}
-                          <Link component={RouterLink} to="/login">
-                            Please login.
-                          </Link>
-                        </>
-                      ))}
+                    An account with this email already exists.{" "}
+                    <Link component={RouterLink} to="/login">
+                      Please login.
+                    </Link>
                   </>
-                ) : undefined
+                ) : (
+                  errors.email?.message
+                )
               }
             />
           </Grid>
