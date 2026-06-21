@@ -8,9 +8,15 @@ export const setCurrentUser = (user: User): void => {
 };
 
 export const getCurrentUser = (): Omit<User, "password"> | null => {
-  const user = localStorage.getItem(CURRENT_USER_KEY);
+  const raw = localStorage.getItem(CURRENT_USER_KEY);
 
-  return user ? JSON.parse(user) : null;
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 };
 
 export const logout = () => {

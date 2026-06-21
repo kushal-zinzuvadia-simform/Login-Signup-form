@@ -1,9 +1,15 @@
 import { type User } from "../types/userSchema";
 
 export const getUsers = (): User[] => {
-  const users = localStorage.getItem("users");
+  const raw = localStorage.getItem("users");
 
-  return users ? JSON.parse(users) : [];
+  if (!raw) return [];
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
 };
 
 export const saveUsers = (users: User[]) => {
