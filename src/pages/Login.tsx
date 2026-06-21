@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { loginSchema, type LoginSchema } from "../types/loginSchema";
 import { getUsers } from "../utils/userStorage";
+import { setCurrentUser } from "../utils/auth";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ export const Login = () => {
       return;
     }
 
-    localStorage.setItem("currentUser", JSON.stringify(validUser));
+    setCurrentUser(validUser);
 
     navigate("/profile", { replace: true });
   };
