@@ -26,7 +26,13 @@ export const useProfileImage = () => {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      setProfileImage(reader.result as string);
+      if (typeof reader.result === "string") {
+        setProfileImage(reader.result);
+      }
+    };
+
+    reader.onerror = () => {
+      setImageError("Failed to read the image file. Please try again.");
     };
 
     reader.readAsDataURL(file);
